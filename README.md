@@ -28,7 +28,7 @@ The application utilizes a pre-trained YOLO-NAS model tailored for sign language
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/Sign-Language_Detection.git
+    git clone https://github.com/darshneesunderraj/Sign-Language_Detection.git
     cd Sign-Language_Detection
     ```
 
