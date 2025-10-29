@@ -1,4 +1,4 @@
-name: Build and deploy Python app to Azure Web App - Sign-Lang
+name: Build and deploy Streamlit app to Azure Web App - Sign-Lang
 
 on:
   push:
@@ -9,11 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Set up Python 3.9
@@ -21,37 +19,37 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Validate requirements file
+      - name: Install dependencies
         run: |
-          echo "Checking requirements.txt..."
-          pip install --upgrade pip
-          pip install -r requirements.txt --dry-run || true
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Remove large caches to reduce zip size
+          pip cache purge || true
 
-      - name: Upload source for deployment
+      - name: Prepare deployment package
+        run: |
+          mkdir deploy
+          cp -r *.py requirements.txt deploy/
+          cp -r models/ deploy/ || true
+          cp -r assets/ deploy/ || true
+          cd deploy && zip -r ../app.zip .
+
+      - name: Upload deployment package
         uses: actions/upload-artifact@v4
         with:
-          name: python-app
-          path: |
-            .
-            !antenv/
-            !.venv/
-            !__pycache__/
-            !*.pyc
-            !*.pyo
-            !*.pyd
+          name: app-package
+          path: app.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
-      - name: Download artifact from build job
+      - name: Download deployment package
         uses: actions/download-artifact@v4
         with:
-          name: python-app
+          name: app-package
+          path: .
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -60,9 +58,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4CB21689FC15479D89C747FF696EE34C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_48C44834A5024BD58F48FED3B4853A7D }}
 
-      - name: Deploy to Azure Web App via Oryx
+      - name: Deploy to Azure Web App using ZIP Deploy
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Sign-Lang'
           slot-name: 'Production'
-          package: .
+          package: app.zip
