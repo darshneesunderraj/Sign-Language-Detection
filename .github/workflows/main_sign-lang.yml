@@ -75,5 +75,6 @@ jobs:
         run: |
           az webapp config set \
             --name Sign-Lang \
-            --resource-group <YOUR_RESOURCE_GROUP_NAME> \
-            --startup-file "python3 -m streamlit run streamlit_app.py --server.port 8000 --server.address 0.0.0.0"
+            --resource-group sign_lang \
+            --startup-file "python3 -m streamlit run main.py --server.port 8000 --server.address 0.0.0.0"
+
