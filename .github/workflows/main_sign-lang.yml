@@ -13,7 +13,8 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
@@ -23,6 +24,7 @@ jobs:
       - name: Validate requirements file
         run: |
           echo "Checking requirements.txt..."
+          pip install --upgrade pip
           pip install -r requirements.txt --dry-run || true
 
       - name: Upload source for deployment
@@ -32,8 +34,8 @@ jobs:
           path: |
             .
             !antenv/
-            !__pycache__/
             !.venv/
+            !__pycache__/
             !*.pyc
             !*.pyo
             !*.pyd
@@ -58,10 +60,9 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4CB21689FC15479D89C747FF696EE34C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_48C44834A5024BD58F48FED3B4853A7D }}
 
-      - name: Deploy to Azure Web App
+      - name: Deploy to Azure Web App via Oryx
         uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
         with:
           app-name: 'Sign-Lang'
           slot-name: 'Production'
-          package: ''
+          package: .
