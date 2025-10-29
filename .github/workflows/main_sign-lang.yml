@@ -63,9 +63,17 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4CB21689FC15479D89C747FF696EE34C }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_48C44834A5024BD58F48FED3B4853A7D }}
 
-      - name: Deploy to Azure Web App using ZIP Deploy
+      - name: Deploy to Azure Web App using Oryx build
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Sign-Lang'
           slot-name: 'Production'
           package: app.zip
+          runtime-stack: 'PYTHON|3.9'
+
+      - name: Set Streamlit startup command
+        run: |
+          az webapp config set \
+            --name Sign-Lang \
+            --resource-group <YOUR_RESOURCE_GROUP_NAME> \
+            --startup-file "python3 -m streamlit run streamlit_app.py --server.port 8000 --server.address 0.0.0.0"
