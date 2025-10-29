@@ -1,10 +1,14 @@
-name: Build and deploy Streamlit app to Azure Web App - Sign-Lang
+name: Build and Deploy Streamlit App to Azure Web App - Sign-Lang
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
@@ -29,8 +33,10 @@ jobs:
         run: |
           mkdir deploy
           cp -r *.py requirements.txt deploy/
-          cp -r models/ deploy/ || true
-          cp -r assets/ deploy/ || true
+          cp -r model_weights/ deploy/ || true
+          cp -r images/ deploy/ || true
+          cp -r Video/ deploy/ || true
+          cp -r custom.onnx deploy/ || true
           cd deploy && zip -r ../app.zip .
 
       - name: Upload deployment package
