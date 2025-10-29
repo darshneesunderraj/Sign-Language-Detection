@@ -30,7 +30,7 @@ with col3:
     st.image("images/sample3.jpg", caption="Sample 3")
 
 st.markdown("""
-**What can you do?**
+*What can you do?*
 - Detect sign language gestures from images, videos, or live webcam.
 - Real-time gesture detection with YOLO-NAS technology.
 - Upload and analyze sign language videos with automatic gesture recognition.
@@ -110,9 +110,9 @@ if st.session_state.get('detection_started', False):
 
 st.markdown("""
 ### Key Features:
-- 🖼 **Image Upload:** Upload an image showing a sign language gesture.
-- 📹 **Video Upload:** Analyze and translate sign language from video.
-- 🎥 **Live Webcam Detection:** Detect gestures in real-time using your webcam.
+- 🖼 *Image Upload:* Upload an image showing a sign language gesture.
+- 📹 *Video Upload:* Analyze and translate sign language from video.
+- 🎥 *Live Webcam Detection:* Detect gestures in real-time using your webcam.
 """)
 st.image("images/signs.jpg", caption="Sign Language Signs", use_column_width=True)
 
